@@ -1,6 +1,7 @@
 package de.nosebrain.pipes.webapp.controller;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
@@ -25,11 +26,23 @@ import com.rometools.rome.io.XmlReader;
 @RequestMapping("/youtube")
 public class YoutubeController {
 
+  private static final String YOUTUBE_FEED_ADDRESS = "https://www.youtube.com/feeds/videos.xml";
   private static final Namespace YOUTUBE_NAMESPACE = Namespace.getNamespace("yt", "http://www.youtube.com/xml/schemas/2015");
 
   @RequestMapping("/users/{username}")
-  public void renamePodcast(@PathVariable("username") final String username, @RequestParam(value = "title", required = false) final String title, @RequestParam("serviceUrl") final String serviceUrl, final HttpServletResponse response) throws IOException, IllegalArgumentException, FeedException {
-    final URL url = new URL("https://www.youtube.com/feeds/videos.xml?user=" + username);
+  public void userFeed(@PathVariable("username") final String username, @RequestParam(value = "title", required = false) final String title, @RequestParam("serviceUrl") final String serviceUrl, final HttpServletResponse response) throws IOException, IllegalArgumentException, FeedException {
+    final String feedUrl = YOUTUBE_FEED_ADDRESS + "?user=" + username;
+    modifyFeed(title, serviceUrl, response, feedUrl);
+  }
+  
+  @RequestMapping("/channels/{channelId}")
+  public void channelFeed(@PathVariable("channelId") final String channelId, @RequestParam(value = "title", required = false) final String title, @RequestParam("serviceUrl") final String serviceUrl, final HttpServletResponse response) throws IOException, IllegalArgumentException, FeedException {
+    final String feedUrl = YOUTUBE_FEED_ADDRESS + "?channel_id=" + channelId;
+    modifyFeed(title, serviceUrl, response, feedUrl);
+  }
+  
+  private static void modifyFeed(final String title, final String serviceUrl, final HttpServletResponse response, final String feedUrl) throws MalformedURLException, FeedException, IOException {
+    final URL url = new URL(feedUrl);
     final SyndFeedInput input = new SyndFeedInput();
     final SyndFeed feed = input.build(new XmlReader(url));
     if (title != null) {
