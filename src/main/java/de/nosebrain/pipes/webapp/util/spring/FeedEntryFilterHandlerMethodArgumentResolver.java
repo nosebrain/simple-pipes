@@ -1,0 +1,63 @@
+package de.nosebrain.pipes.webapp.util.spring;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.springframework.core.MethodParameter;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.support.WebDataBinderFactory;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.ModelAndViewContainer;
+
+import de.nosebrain.pipes.filter.CategoryFilter;
+import de.nosebrain.pipes.filter.FeedEntryFilter;
+import de.nosebrain.pipes.filter.TitleFilter;
+
+public class FeedEntryFilterHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
+
+  @Override
+  public boolean supportsParameter(final MethodParameter parameter) {
+    final Class<?> parameterType = parameter.getParameterType();
+    
+    if ((parameterType != null) && Collection.class.isAssignableFrom(parameterType)) {
+      final Type genericParameterType = parameter.getGenericParameterType();
+      if (genericParameterType instanceof ParameterizedType) {
+        final ParameterizedType parameterizedType = (ParameterizedType) genericParameterType;
+        final Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+        if ((actualTypeArguments != null) && (actualTypeArguments.length > 0)) {
+          return actualTypeArguments[0].equals(FeedEntryFilter.class);
+        }
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public Object resolveArgument(final MethodParameter parameter, final ModelAndViewContainer mavContainer, final NativeWebRequest webRequest, final WebDataBinderFactory binderFactory) throws Exception {
+    final WebDataBinder binder = binderFactory.createBinder(webRequest, null, null);
+    final ConversionService conversionService = binder.getConversionService();
+    final Set<FeedEntryFilter> filters = new HashSet<>();
+    final String[] categoriesArray = webRequest.getParameterValues("filters.categories");
+    final String categoryParameter = conversionService.convert(categoriesArray, String.class);
+    if (categoryParameter != null) {
+      @SuppressWarnings("unchecked") // ok
+      final Set<String> categories = conversionService.convert(categoryParameter, Set.class);
+      final CategoryFilter categoryFilter = new CategoryFilter(categories);
+      filters.add(categoryFilter);
+    }
+    
+    final String titleParameter = webRequest.getParameter("filters.title");
+    if ((titleParameter != null) && !titleParameter.isEmpty()) {
+      final TitleFilter titleFilter = new TitleFilter(titleParameter);
+      filters.add(titleFilter);
+    }
+    
+    return filters;
+  }
+
+}
