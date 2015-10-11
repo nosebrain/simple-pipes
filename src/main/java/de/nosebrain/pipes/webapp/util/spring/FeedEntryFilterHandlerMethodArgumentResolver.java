@@ -16,10 +16,12 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import de.nosebrain.pipes.filter.CategoryFilter;
 import de.nosebrain.pipes.filter.FeedEntryFilter;
+import de.nosebrain.pipes.filter.NegatingFilter;
 import de.nosebrain.pipes.filter.TitleFilter;
 
 public class FeedEntryFilterHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
-
+  private static final String NEGATE_CHAR = "!";
+  
   @Override
   public boolean supportsParameter(final MethodParameter parameter) {
     final Class<?> parameterType = parameter.getParameterType();
@@ -44,20 +46,53 @@ public class FeedEntryFilterHandlerMethodArgumentResolver implements HandlerMeth
     final Set<FeedEntryFilter> filters = new HashSet<>();
     final String[] categoriesArray = webRequest.getParameterValues("filters.categories");
     final String categoryParameter = conversionService.convert(categoriesArray, String.class);
-    if (categoryParameter != null) {
-      @SuppressWarnings("unchecked") // ok
-      final Set<String> categories = conversionService.convert(categoryParameter, Set.class);
-      final CategoryFilter categoryFilter = new CategoryFilter(categories);
+    final FeedEntryFilter categoryFilter = getCategoryFilter(conversionService, categoryParameter);
+    if (categoryFilter != null) {
       filters.add(categoryFilter);
     }
     
     final String titleParameter = webRequest.getParameter("filters.title");
-    if ((titleParameter != null) && !titleParameter.isEmpty()) {
-      final TitleFilter titleFilter = new TitleFilter(titleParameter);
+    final FeedEntryFilter titleFilter = getTitleFilter(titleParameter);
+    if (titleFilter != null) {
       filters.add(titleFilter);
     }
     
     return filters;
+  }
+  
+  private static FeedEntryFilter getTitleFilter(String titleParameter) {
+    if ((titleParameter != null) && !titleParameter.isEmpty()) {
+      if (titleParameter.startsWith(NEGATE_CHAR)) {
+        titleParameter = titleParameter.substring(1);
+        return new NegatingFilter(buildTitleFilter(titleParameter));
+      }
+      return buildTitleFilter(titleParameter);
+    }
+    
+    return null;
+  }
+  
+  private static FeedEntryFilter buildTitleFilter(final String titleParameter) {
+    return new TitleFilter(titleParameter);
+  }
+
+  private static FeedEntryFilter getCategoryFilter(final ConversionService conversionService, String categoryParameter) {
+    if ((categoryParameter != null) && !categoryParameter.isEmpty()) {
+      if (categoryParameter.startsWith(NEGATE_CHAR)) {
+        categoryParameter = categoryParameter.substring(1);
+        return buildCategoryFilter(conversionService, categoryParameter);
+      }
+      return buildCategoryFilter(conversionService, categoryParameter);
+    }
+    
+    return null;
+  }
+  
+  private static FeedEntryFilter buildCategoryFilter(final ConversionService conversionService, final String categoryParameter) {
+    @SuppressWarnings("unchecked") // ok
+    final Set<String> categories = conversionService.convert(categoryParameter, Set.class);
+    final CategoryFilter categoryFilter = new CategoryFilter(categories);
+    return categoryFilter;
   }
 
 }
