@@ -46,6 +46,7 @@ public class GeneralController {
     }
     
     final SyndFeedOutput output = new SyndFeedOutput();
+    response.setCharacterEncoding("UTF-8");
     output.output(feed, response.getWriter());
   }
 }
