@@ -58,8 +58,9 @@ public class YoutubeController {
       linkToVideo.setType("video/mp4");
       entry.getEnclosures().add(linkToVideo);
     }
-
+    
     final SyndFeedOutput output = new SyndFeedOutput();
+    response.setCharacterEncoding("UTF-8");
     output.output(feed, response.getWriter());
   }
   
