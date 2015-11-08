@@ -31,13 +31,13 @@ public class FeedBuilderController {
   
   @RequestMapping("/{url}")
   public void filterFeedByCategory(@PathVariable("url") final URL source,
-        @RequestParam("feed.title") final String feedTitle,
-        @RequestParam("selectors.content") final String contentSelector,
-        @RequestParam("selectors.items.title") final String itemTitleSelector,
-        @RequestParam("selectors.items.link") final String itemLinkSelector,
-        @RequestParam("selectors.items.date") final String itemDateSelector,
+        @RequestParam(value = "feed.title") final String feedTitle,
+        @RequestParam(value = "selectors.content") final String contentSelector,
+        @RequestParam(value = "selectors.items.title") final String itemTitleSelector,
+        @RequestParam(value = "selectors.items.link") final String itemLinkSelector,
+        @RequestParam(value = "selectors.items.date") final String itemDateSelector,
         @RequestParam(value = "selectors.items.description", required = false) final String itemDescriptionSelector,
-        @RequestParam("formats.items.date") final String dateFormatString,
+        @RequestParam(value = "formats.items.date") final String dateFormatString,
         final HttpServletResponse response) throws IllegalArgumentException, FeedException, IOException, ParseException {
     final Document doc = Jsoup.parse(source, 5000);
     final Elements items = doc.select(contentSelector);

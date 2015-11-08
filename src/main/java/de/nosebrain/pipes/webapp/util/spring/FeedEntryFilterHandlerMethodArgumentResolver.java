@@ -103,10 +103,10 @@ public class FeedEntryFilterHandlerMethodArgumentResolver implements HandlerMeth
     if ((parameter != null) && !parameter.isEmpty()) {
       if (parameter.startsWith(NEGATE_CHAR)) {
         parameter = parameter.substring(1);
-        return new NegatingFilter(feedEntryFilterBuilder.buildFilter(parameter, null));
+        return new NegatingFilter(feedEntryFilterBuilder.buildFilter(parameter, conversionService));
       }
       
-      return feedEntryFilterBuilder.buildFilter(parameter, null);
+      return feedEntryFilterBuilder.buildFilter(parameter, conversionService);
     }
     
     return null;
