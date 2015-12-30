@@ -2,11 +2,11 @@ package de.nosebrain.pipes.filter;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 
-public class TitleFilter implements FeedEntryFilter {
+public class TitleContainsFilter implements FeedEntryFilter {
   
   private final String titleString;
   
-  public TitleFilter(final String titleString) {
+  public TitleContainsFilter(final String titleString) {
     this.titleString = titleString;
   }
   

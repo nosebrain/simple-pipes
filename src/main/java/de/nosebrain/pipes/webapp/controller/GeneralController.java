@@ -3,7 +3,6 @@ package de.nosebrain.pipes.webapp.controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Iterator;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,7 +24,7 @@ import de.nosebrain.pipes.filter.FeedEntryFilter;
 public class GeneralController {
   
   @RequestMapping("/{url}")
-  public void filterFeedByCategory(@PathVariable("url") final URL url, final Set<FeedEntryFilter> filters, final HttpServletResponse response) throws IllegalArgumentException, FeedException, IOException {
+  public void filterFeedByCategory(@PathVariable("url") final URL url, final FeedEntryFilter filter, final HttpServletResponse response) throws IllegalArgumentException, FeedException, IOException {
     final SyndFeedInput input = new SyndFeedInput();
     final SyndFeed feed = input.build(new XmlReader(url));
     
@@ -34,12 +33,7 @@ public class GeneralController {
     while (iterator.hasNext()) {
       final SyndEntry entry = iterator.next();
       
-      boolean remove = true;
-      
-      for (final FeedEntryFilter feedEntryFilter : filters) {
-        remove &= !feedEntryFilter.filter(entry);
-      }
-      
+      final boolean remove = !filter.filter(entry);
       if (remove) {
         iterator.remove();
       }
