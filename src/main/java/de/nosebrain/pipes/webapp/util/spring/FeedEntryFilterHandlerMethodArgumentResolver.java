@@ -47,7 +47,7 @@ public class FeedEntryFilterHandlerMethodArgumentResolver implements HandlerMeth
       }
     });
     
-    BUILDER_MAP.put("categories", new FeedEntryFilterBuilder() {
+    BUILDER_MAP.put("category", new FeedEntryFilterBuilder() {
       
       @Override
       public FeedEntryFilter buildFilter(final String parameter) {
