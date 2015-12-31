@@ -47,7 +47,7 @@ public class FeedEntryFilterHandlerMethodArgumentResolver implements HandlerMeth
       }
     });
     
-    BUILDER_MAP.put("categories", new FeedEntryFilterBuilder() {
+    BUILDER_MAP.put("category", new FeedEntryFilterBuilder() {
       
       @Override
       public FeedEntryFilter buildFilter(final String parameter) {
@@ -68,7 +68,11 @@ public class FeedEntryFilterHandlerMethodArgumentResolver implements HandlerMeth
 
   @Override
   public Object resolveArgument(final MethodParameter parameter, final ModelAndViewContainer mavContainer, final NativeWebRequest webRequest, final WebDataBinderFactory binderFactory) throws Exception {
-    final FilterGrammarLexer lexer = new FilterGrammarLexer(new ANTLRInputStream(webRequest.getParameter("filter")));
+    final String filterExpression = webRequest.getParameter("filter");
+    if ((filterExpression == null) || filterExpression.isEmpty()) {
+      throw new IllegalArgumentException("Please specify a filter.");
+    }
+    final FilterGrammarLexer lexer = new FilterGrammarLexer(new ANTLRInputStream(filterExpression));
     
     // Get a list of matched tokens
     final CommonTokenStream tokens = new CommonTokenStream(lexer);

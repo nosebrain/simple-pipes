@@ -21,12 +21,12 @@ public class OrFilter implements BooleanFilter {
   public boolean filter(final SyndEntry entry) {
     for (final FeedEntryFilter feedEntryFilter : this.filters) {
       final boolean singleFilterResult = feedEntryFilter.filter(entry);
-      if (!singleFilterResult) {
-        return false;
+      if (singleFilterResult) {
+        return true;
       }
     }
     
-    return true;
+    return false;
   }
   
   @Override
