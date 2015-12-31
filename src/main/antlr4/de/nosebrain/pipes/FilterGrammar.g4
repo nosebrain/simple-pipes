@@ -21,7 +21,7 @@ operator      : NEQ | EQ | LIKE ;
 bool_op       : OR | AND ;
 variable      : LETTER+ ;
 /** FIXME: allow all chars*/
-operand       : (LETTER|SPACE|DIGIT|'-')+? ;
+operand       : (LETTER|SPACE|DIGIT|'ä'|'ü'|'ö'|'-')+? ;
 
 expression    : factor (SPACE? bool_op SPACE? factor)* ;
 
