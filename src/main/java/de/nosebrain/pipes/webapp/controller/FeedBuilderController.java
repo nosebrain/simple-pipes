@@ -44,6 +44,7 @@ public class FeedBuilderController {
     final SyndFeed feed = new SyndFeedImpl();
     feed.setFeedType("atom_0.3");
     feed.setTitle(feedTitle);
+    feed.setUri(source.toString());
     final SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatString);
     for (final Element element : items) {
       final SyndEntry entry = new SyndEntryImpl();
