@@ -76,7 +76,7 @@
 				<version>2.2</version>
 				<configuration>
 					<server>prod</server>
-					<url>http://10.0.1.152:8080/manager/text</url>
+					<url>http://nosebain.de:8080/manager/text</url>
 				</configuration>
 			</plugin>
 			<plugin>
