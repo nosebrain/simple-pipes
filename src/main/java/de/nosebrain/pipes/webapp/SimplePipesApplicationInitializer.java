@@ -1,7 +1,6 @@
 package de.nosebrain.pipes.webapp;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 import org.springframework.web.WebApplicationInitializer;
@@ -18,7 +17,7 @@ public class SimplePipesApplicationInitializer implements WebApplicationInitiali
   public static final String SERVLET_NAME = "simple-pipes";
 
   @Override
-  public void onStartup(final ServletContext servletContext) throws ServletException {
+  public void onStartup(final ServletContext servletContext) {
     final WebApplicationContext context = createContext();
     
     // the character encoding filter
