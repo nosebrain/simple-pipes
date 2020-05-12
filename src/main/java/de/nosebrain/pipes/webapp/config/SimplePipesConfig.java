@@ -16,7 +16,7 @@ import de.nosebrain.pipes.webapp.util.spring.FeedEntryFilterHandlerMethodArgumen
 
 @Configuration
 @ComponentScan(basePackageClasses = { GeneralController.class })
-@PropertySource({"classpath:simple-pipe.properties", "file:${catalina.home}/conf/simple-pipes/simple-pipes.properties"})
+@PropertySource(value = {"classpath:simple-pipe.properties", "file:${catalina.home}/conf/simple-pipes/simple-pipes.properties"}, ignoreResourceNotFound = true)
 public class SimplePipesConfig extends WebMvcConfigurationSupport {
   
   @Override

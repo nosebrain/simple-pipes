@@ -56,7 +56,7 @@ public class YoutubeController {
     buildFeed(title, serviceUrl, response, feedUrl, feedImage);
   }
 
-  private static URL getFeedImageUrl(String youtubeApiKey, String user, String channelId) throws IOException {
+  private static URL getFeedImageUrl(String youtubeApiKey, String user, String channelId) {
     String urlToCall = "https://www.googleapis.com/youtube/v3/channels?part=snippet&key=" + youtubeApiKey;
     if (user != null) {
       urlToCall += "&forUsername=" + user;
