@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.rometools.modules.itunes.FeedInformation;
 import com.rometools.modules.itunes.FeedInformationImpl;
+import com.rometools.modules.mediarss.MediaEntryModule;
+import com.rometools.modules.mediarss.types.MediaGroup;
+import com.rometools.rome.feed.module.Module;
 import com.rometools.rome.feed.synd.SyndContent;
 import com.rometools.rome.feed.synd.SyndContentImpl;
 import com.rometools.rome.feed.synd.SyndEntryImpl;
@@ -101,14 +104,19 @@ public class YoutubeController {
 
       final List<Element> foreignMarkup = entry.getForeignMarkup();
       final Element youtubeIdElement = getForeignMarkup("videoId", YOUTUBE_NAMESPACE, foreignMarkup);
-
-      final Element mediaGroup = getForeignMarkup("group", MEDIA_NAMESPACE, foreignMarkup);
-      if (mediaGroup != null) {
-        final Element entryDescription = mediaGroup.getChild("description", MEDIA_NAMESPACE);
-        final SyndContent description = new SyndContentImpl();
-        description.setType("text/plain");;
-        description.setValue(entryDescription.getText());
-        newEntry.setDescription(description);
+      final Module mediaModule = entry.getModule(MEDIA_NAMESPACE.getURI());
+      if (mediaModule instanceof MediaEntryModule) {
+        final MediaEntryModule mediaEntryModule = (MediaEntryModule) mediaModule;
+        final MediaGroup[] mediaGroups = mediaEntryModule.getMediaGroups();
+        for (final MediaGroup mediaGroup : mediaGroups) {
+          final String description = mediaGroup.getMetadata().getDescription();
+          if (description != null) {
+            final SyndContent descriptionElement = new SyndContentImpl();
+            descriptionElement.setType("text/plain");;
+            descriptionElement.setValue(description);
+            newEntry.setDescription(descriptionElement);
+          }
+        }
       }
 
       final String youtubeId = youtubeIdElement.getValue();
