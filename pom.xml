@@ -11,7 +11,7 @@
 	</scm>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.version>4.2.1.RELEASE</spring.version>
+		<spring.version>5.2.20.RELEASE</spring.version>
 		<spring-security.version>3.2.5.RELEASE</spring-security.version>
 		<antlr.version>4.5.1-1</antlr.version>
 		<wtpversion>1.5</wtpversion>
